@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" width="830" height="482" borderStyle="solid" cornerRadius="0" backgroundGradientAlphas="[1.0, 1.0]" backgroundGradientColors="[#FFFFFF, #FFFFFF]" color="#FFFFFF">
+<mx:Script source="Main.as" />
+	<mx:VideoDisplay x="0" y="0" width="640" height="480" id="camera_feed" creationComplete="init();"/>
+	<mx:TextInput x="658" y="448" width="102" displayAsPassword="true" id="password_field" editable="true" enabled="true" color="#000000"/>
+	<mx:TextInput x="658" y="418" width="102" fontFamily="Lucida Grande" id="username_field" editable="true" enabled="true" color="#000000"/>
+	<mx:Label text="Spot Watcher" fontFamily="Lucida Grande" fontSize="24" color="#000000" width="170" height="34" textAlign="center" fontWeight="normal" y="10" x="648" enabled="true" fontStyle="normal" textDecoration="normal"/>
+	<mx:TextArea x="658" y="64" height="171" wordWrap="true" editable="false" enabled="true" color="#000000" fontWeight="normal" fontFamily="Lucida Grande" borderStyle="none" backgroundAlpha="1.0" fontSize="10">
+		<mx:text><![CDATA[Monitor a spot for activity.
+
+You can move the spot by dragging its center or recreate the spot by dragging out a selection box.
+
+The meter shows the amount of activity in the spot. To vary the amount of activity required to trigger the alert, use the slider.]]></mx:text>
+	</mx:TextArea>
+	<mx:Image x="768" y="405" width="50" height="50" source="../resources/Twitter_Bird_Logo_by_iPotion.gif" scaleContent="true" autoLoad="true" themeColor="#FFFFFF"/>
+	<mx:Button x="768" y="448" label="login" fontFamily="Lucida Grande" width="50" color="#000000" fontSize="9"/>
+	<mx:ProgressBar x="658" y="243" width="154" minimum="0" maximum="100" enabled="true" height="21" label="activity in the spot" labelPlacement="center" color="#000000" indeterminate="false" borderColor="#FFFFFF" fontWeight="normal" fontStyle="italic" id="activity_meter"/>
+	<mx:HRule x="648" y="341" width="170" height="8"/>
+	<mx:HSlider x="652" y="252" enabled="true" liveDragging="false" minimum="0" maximum="100" allowTrackClick="true" width="166" borderColor="#FFFFFF" id="activity_slider"/>
+	<mx:TextArea x="657" y="357" width="154" height="53" color="#000000" fontFamily="Lucida Grande" borderStyle="none" editable="false" wordWrap="true">
+		<mx:text>To send your alert through Twitter, enter your Twitter name and password.</mx:text>
+	</mx:TextArea>
+	<mx:Label x="648" y="288" text="ACTIVITY ALERT" width="170" color="#FF0000" textAlign="center" id="activity_detected" enabled="true" fontWeight="bold" height="24" fontSize="15" fontFamily="Verdana" textDecoration="normal"/>
+	<mx:Canvas x="0" y="0" width="640" height="480" id="canvas">
+	</mx:Canvas>
+	
+</mx:Application>
