@@ -9,14 +9,14 @@
 		<mx:text><![CDATA[Monitor a spot for activity by dragging out a selection box.
 ]]></mx:text>
 	</mx:TextArea>
-	<mx:TextArea x="831" y="333" height="22" wordWrap="true" editable="false" enabled="true" color="#000000" fontWeight="normal" fontFamily="Lucida Grande" borderStyle="none" backgroundAlpha="1.0" fontSize="10" textAlign="right" width="58">
+	<mx:TextArea x="831" y="303" height="22" wordWrap="true" editable="false" enabled="true" color="#000000" fontWeight="normal" fontFamily="Lucida Grande" borderStyle="none" backgroundAlpha="1.0" fontSize="10" textAlign="right" width="58">
 		<mx:text>Twitter ID</mx:text>
 	</mx:TextArea>
-	<mx:TextArea x="831" y="363" height="22" wordWrap="true" editable="false" enabled="true" color="#000000" fontWeight="normal" fontFamily="Lucida Grande" borderStyle="none" backgroundAlpha="1.0" fontSize="10" textAlign="right" width="58">
+	<mx:TextArea x="831" y="333" height="22" wordWrap="true" editable="false" enabled="true" color="#000000" fontWeight="normal" fontFamily="Lucida Grande" borderStyle="none" backgroundAlpha="1.0" fontSize="10" textAlign="right" width="58">
 		<mx:text>Message</mx:text>
 	</mx:TextArea>
 	<mx:TextArea x="853" y="106" height="79" wordWrap="true" editable="false" enabled="true" color="#000000" fontWeight="normal" fontFamily="Lucida Grande" borderStyle="none" backgroundAlpha="1.0" fontSize="10" textAlign="center" width="193">
-		<mx:text>Adjust the motion threshold by clicking on the graph. When motion exceeds the threshold, pictures will be taken, and Twitter alert will be sent if you fill in the Twitter form.</mx:text>
+		<mx:text>Adjust the motion threshold by clicking on the graph. When motion exceeds the threshold, pictures will be taken, and a Twitter alert will be sent if you fill in the Twitter form.</mx:text>
 	</mx:TextArea>
 	<!-- <mx:ProgressBar x="658" y="243" width="154" minimum="0.0" maximum="100.0" enabled="true" height="21" label="activity in the spot" labelPlacement="center" color="#000000" mode="manual" indeterminate="true" borderColor="#FFFFFF" fontWeight="normal" fontStyle="italic" id="activity_meter"/>
 	<mx:HRule x="648" y="341" width="170" height="8"/>
@@ -24,8 +24,9 @@
 	-->
 	<mx:Canvas x="0" y="0" width="548" height="411" id="canvas">
 	</mx:Canvas>
-	<mx:Canvas x="846" y="193" width="215" height="107" id="graph" borderStyle="solid" alpha="1.0" backgroundColor="#FFFFFF" borderThickness="1" cornerRadius="5" borderColor="#000000">
+	<mx:Canvas x="846" y="193" width="215" height="90" id="graph" borderStyle="solid" alpha="1.0" backgroundColor="#FFFFFF" borderThickness="1" cornerRadius="5" borderColor="#000000">
 	</mx:Canvas>
-	<mx:TextInput x="897" y="331" color="#000000" width="164" id="twitter_id" editable="true" enabled="true"/>
-	<mx:TextInput x="897" y="361" width="164" id="twitter_message" editable="true" enabled="true" color="#000000" maxChars="140"/>
+	<mx:TextInput x="897" y="301" color="#000000" width="164" id="twitter_id" editable="true" enabled="true"/>
+	<mx:TextInput x="897" y="331" width="164" id="twitter_message" editable="true" enabled="true" color="#000000" maxChars="140"/>
+	<mx:CheckBox x="897" y="361" label="Upload Images (testing)" color="#000000" enabled="true" id="twitter_checkbox" selected="false"/>
 </mx:Application>

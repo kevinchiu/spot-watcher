@@ -6,9 +6,13 @@ import flash.events.TimerEvent;
 import flash.media.Camera;
 import flash.net.URLLoader;
 import flash.net.URLRequest;
+import flash.net.URLRequestHeader;
+import flash.net.URLVariables;
+import flash.utils.ByteArray;
 import flash.utils.Timer;
 
 import mx.core.UIComponent;
+import mx.graphics.codec.JPEGEncoder;
 
 import vision.VisionPipeline;
 
@@ -61,16 +65,16 @@ private function initCanvas():void {
 
 private function initMouseController():void {
 	mouseController = new MouseController(painter)
-	canvas.addEventListener(MouseEvent.MOUSE_UP, mouseController.mouseUp)
-	canvas.addEventListener(MouseEvent.MOUSE_DOWN, mouseController.mouseDown)
-	canvas.addEventListener(MouseEvent.MOUSE_MOVE, mouseController.mouseMove)
+	canvas.addEventListener(MouseEvent.MOUSE_UP, mouseController.mouseUpCanvas)
+	canvas.addEventListener(MouseEvent.MOUSE_DOWN, mouseController.mouseDownCanvas)
+	canvas.addEventListener(MouseEvent.MOUSE_MOVE, mouseController.mouseMoveCanvas)
 	mouseController.setPipeline(pipeline)
 }
 
 private function initGraph():void {
 	pGraph = new PixelGraph(graph.width, graph.height)
-	graph.addEventListener(MouseEvent.MOUSE_DOWN, mouseController.mouseDownClean)
-	graph.addEventListener(MouseEvent.MOUSE_UP, mouseController.mouseUpClean)
+	graph.addEventListener(MouseEvent.MOUSE_DOWN, mouseController.mouseDown)
+	graph.addEventListener(MouseEvent.MOUSE_UP, mouseController.mouseUp)
 	graph.addEventListener(MouseEvent.MOUSE_MOVE, mouseController.adjustThreshold)
 	graph.addEventListener(MouseEvent.CLICK, mouseController.adjustThreshold)
 	graph.addChild(pGraph.getGraphContainer())
@@ -103,14 +107,39 @@ private function initTrigger():void{
 
 private function trigger(bd:BitmapData):void{
 	counter++
+	trace("tweet")
+	
+	var message:String = twitter_message.text + " count: " + counter
+	var username:String = twitter_id.text
+	var to_send:String = "@"+username+" "+message
+	var url_string:String
+	var url_request:URLRequest
+	
 	if(twitter_message.length > 0 && twitter_id.length > 0){
-		var message:String = twitter_message.text + " count: " + counter
-		var username:String = twitter_id.text
-		var to_send:String = "@"+username+" "+message
-		var url_string:String = "http://distributedcameras2.appspot.com/twitter?message="+escape(to_send)
-		var url:URLRequest = new URLRequest(url_string)
-		new URLLoader().load(url)
-		trace("tweet sent: " + to_send)
+		if(twitter_checkbox.selected == false){
+			url_string = "http://distributedcameras2.appspot.com/twitter?message="+escape(to_send)
+			url_request = new URLRequest(url_string)
+			new URLLoader().load(url_request)
+			return
+		} else if(twitter_checkbox.selected = true){
+			url_string = "http://distributedcameras2.appspot.com/twitter"
+			url_request = new URLRequest(url_string)
+			
+			var jpgEncoder:JPEGEncoder = new JPEGEncoder(85)
+			var jpgStream:ByteArray = jpgEncoder.encode(bd)
+			
+			var variables:URLVariables = new URLVariables()
+			variables.message = to_send
+			variables.media = jpgStream
+			
+			var header:URLRequestHeader = new URLRequestHeader("Content-type", "multipart/form-data")
+			url_request.requestHeaders.push(header)
+			url_request.method = URLRequestMethod.POST
+			url_request.data = variables
+			var url_loader:URLLoader = new URLLoader()
+			url_loader.load(url_request)
+			trace(url_loader.data)
+		}
 	}
 }
 

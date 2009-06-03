@@ -23,29 +23,29 @@ package
 			down = false
 		}
 		
-		public function mouseDown(event:MouseEvent):void {
+		public function mouseDownCanvas(event:MouseEvent):void {
 			
 			anchorPointA = new Point(event.localX, event.localY)
 			squareDrawn = false
 			down = true
 		}
 		
-		public function mouseDownClean(event:MouseEvent):void {
+		public function mouseDown(event:MouseEvent):void {
 			down = true
 		}
 		
-		public function mouseUpClean(event:MouseEvent):void {
+		public function mouseUp(event:MouseEvent):void {
 			down = false
 		}
 		
-		public function mouseMove(event:MouseEvent):void {
+		public function mouseMoveCanvas(event:MouseEvent):void {
 			if(down){
 				painter.clear()
 				painter.drawSquare(anchorPointA, new Point(event.localX, event.localY))
 			}
 		}
 		
-		public function mouseUp(event:MouseEvent):void {
+		public function mouseUpCanvas(event:MouseEvent):void {
 			
 			down = false
 			anchorPointB = new Point(event.localX, event.localY)
