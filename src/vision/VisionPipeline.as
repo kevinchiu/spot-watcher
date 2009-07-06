@@ -1,4 +1,4 @@
-package vision
+package Vision
 {
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
@@ -15,25 +15,41 @@ package vision
 		private var nodes:Array
 		private var regionOfInterest:Rectangle
 		private var numOut:Function
-		private var previousFrame:BitmapData
-		private var currentFrame:BitmapData
-		private var debugFrame:BitmapData
-		private var debugCanvas:Canvas
-		private var debugBitmap:Bitmap
-		private var debugUIComponent:UIComponent
+		private var debugFrameCropped:BitmapData
+		private var smallCanvas:Canvas
+		private var smallBitmap:Bitmap
+		private var smallContainingUIComponent:UIComponent
 		private var thresh:Number
 		
-		private var triggerFrames:BitmapData
+		private var previousFrame:BitmapData
+		private var currentFrame:BitmapData
+		private var nextFrame:BitmapData
+		
+		private var previousFrameCropped:BitmapData
+		private var currentFrameCropped:BitmapData
+		private var nextFrameCropped:BitmapData
+		
+		private var savedFrameCollage:BitmapData
 		private var trigger:Function
+		
+		private	var scaleM:Matrix
+		private var translateM:Matrix
+		private var translateM2:Matrix
 		
 		public function VisionPipeline(vd:VideoDisplay)
 		{
 			this.cam = vd
-			currentFrame = new BitmapData(cam.width, cam.height, false, 0x000000)
-			previousFrame = currentFrame.clone()
-			debugFrame = currentFrame.clone()
-			triggerFrames = new BitmapData(cam.width/2, cam.height, false, 0x000000)
-			thresh = 1.0
+			
+			currentFrameCropped = new BitmapData(cam.width, cam.height, false, 0x000000)
+			previousFrameCropped = currentFrameCropped.clone()
+			nextFrameCropped = currentFrameCropped.clone()
+			debugFrameCropped = currentFrameCropped.clone()
+			
+			currentFrame = new BitmapData(cam.width/3, cam.height/3, true, 0x000000)
+			previousFrame = currentFrameCropped.clone()
+			nextFrame = currentFrameCropped.clone()
+			
+			savedFrameCollage = new BitmapData(cam.width, cam.height/3, false, 0x000000)
 		}
 		
 		public function setTrigger(f:Function):void {
@@ -42,19 +58,30 @@ package vision
 		
 		//DEBUG
 		public function bindDebugOutput(canvas:Canvas):void {
-			this.debugCanvas = canvas
-			this.debugUIComponent = new UIComponent()
-			this.debugBitmap = new Bitmap(debugFrame)
-			this.debugUIComponent.addChild(debugBitmap)
-			this.debugCanvas.addChild(debugUIComponent)
+			smallCanvas = canvas
+			smallContainingUIComponent = new UIComponent()
+			smallBitmap = new Bitmap(debugFrameCropped)
+			smallContainingUIComponent.addChild(smallBitmap)
+			smallCanvas.addChild(smallContainingUIComponent)
 		}
 		
 		public function bindReleaseOutput(canvas:Canvas):void {
-			this.debugCanvas = canvas
-			this.debugUIComponent = new UIComponent()
-			this.debugBitmap = new Bitmap(triggerFrames)
-			this.debugUIComponent.addChild(debugBitmap)
-			this.debugCanvas.addChild(debugUIComponent)
+			smallCanvas = canvas
+			smallContainingUIComponent = new UIComponent()
+			smallBitmap = new Bitmap(savedFrameCollage)
+			smallContainingUIComponent.addChild(smallBitmap)
+			smallCanvas.addChild(smallContainingUIComponent)
+			
+			var scaleFactor:Number = (smallCanvas.width/3)/cam.width
+			scaleM = new Matrix()
+			scaleM.scale(scaleFactor,scaleFactor)
+			
+			translateM = new Matrix()
+			translateM.translate(smallCanvas.width/3,0)
+			
+			translateM2 = new Matrix()
+			translateM2.translate(smallCanvas.width/3*2,0)
+			
 		}
 		
 		public function setRegionOfInterest(rec:Rectangle):void {
@@ -70,28 +97,34 @@ package vision
 		}
 		
 		public function showCapture():void {
-			debugFrame.draw(cam,new Matrix(),null,null,regionOfInterest, false)
+			debugFrameCropped.draw(cam,new Matrix(),null,null,regionOfInterest, false)
 		}
-		
-			
+
 		public function stepPipeline():void {
-			currentFrame.draw(cam,new Matrix(),null,null,regionOfInterest, false)			
-			debugFrame.draw(Common.diff(previousFrame, currentFrame))
-			var numerator:int = Common.countMovementPixels(debugFrame)
-			var denominator:int = regionOfInterest.width * regionOfInterest.height
-			numOut(numerator / denominator)
 			
-			if(numerator/denominator > thresh){
-				trace("triggered")
-				var m:Matrix = new Matrix()
-				m.scale(debugCanvas.width/cam.width,debugCanvas.width/cam.width)
-				triggerFrames.draw(cam,m)
-				m.translate(0,debugCanvas.height/2)
-				triggerFrames.draw(cam,m)
-				trigger(triggerFrames)
-			}
-				
 			previousFrame = currentFrame.clone()
+			currentFrame = nextFrame.clone()
+			nextFrame.draw(cam, scaleM)
+			
+			previousFrameCropped = currentFrameCropped.clone()
+			currentFrameCropped = nextFrameCropped.clone()
+			nextFrameCropped.draw(cam,new Matrix(),null,null,regionOfInterest, false)
+			
+			debugFrameCropped.draw(Common.diff(previousFrameCropped, currentFrameCropped))
+			
+			if(regionOfInterest == null){
+				setRegionOfInterest(new Rectangle(0,0,cam.height,cam.width))
+			}
+			
+			var activity:Number = Common.countMovementPixels(debugFrameCropped)/(regionOfInterest.width * regionOfInterest.height)
+			if(activity > thresh){
+				savedFrameCollage.draw(previousFrame)
+				savedFrameCollage.draw(currentFrame, translateM)
+				savedFrameCollage.draw(nextFrame, translateM2)
+				trigger(savedFrameCollage)
+			}
+			
+			numOut(activity)
 		}
 	}
 }

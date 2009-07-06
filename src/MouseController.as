@@ -4,7 +4,7 @@ package
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
 	
-	import vision.VisionPipeline;
+	import Vision.VisionPipeline;
 	
 	public class MouseController
 	{

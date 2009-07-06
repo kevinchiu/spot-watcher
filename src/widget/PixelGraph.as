@@ -1,10 +1,11 @@
-package widget
+package Widget
 {
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
 	import flash.geom.Matrix;
 	import flash.geom.Rectangle;
 	
+	import mx.controls.Label;
 	import mx.core.UIComponent;
 	
 	public class PixelGraph
@@ -17,6 +18,7 @@ package widget
 		
 		private var thresholdData:BitmapData
 		private var thresholdBitmap:Bitmap
+		private var thresholdLabel:Label
 		
 		private var height:Number
 		private var width:int
@@ -31,7 +33,8 @@ package widget
 			
 			thresholdData = new BitmapData(width,height,true,0x00ffffff)
 			thresholdBitmap = new Bitmap(thresholdData)
-			
+			thresholdLabel = new Label()
+			thresholdLabel.text = "threshold"
 			graphContainer = new UIComponent()
 			graphContainer.addChild(graphBitmap)
 			graphContainer.addChild(thresholdBitmap)
@@ -42,7 +45,7 @@ package widget
 			
 			//shift 
 			var m:Matrix = new Matrix()
-			m.translate(-1.01,0)
+			m.translate(-1,0)
 			graphData.draw(graphData,m)
 
 			var y:int = height * val

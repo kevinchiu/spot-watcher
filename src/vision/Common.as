@@ -1,4 +1,4 @@
-package vision
+package Vision
 {
 	import flash.display.BitmapData;
 		
